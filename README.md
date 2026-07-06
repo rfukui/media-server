@@ -29,6 +29,14 @@ The primary stack in `compose.yaml` runs:
 - `.env`: local deploy-time variables and template values
 - `.env.example`: documented example of the required local variables
 
+## Commit Convention
+
+This repository follows the [Conventional Commits](https://www.conventionalcommits.org/) specification.
+
+- Use commit messages such as `feat: ...`, `fix: ...`, `docs: ...`, `refactor: ...`, or `chore: ...`
+- Keep the scope and description explicit for infrastructure, deployment, and service-configuration changes
+- Follow this convention for every new commit in this project
+
 ## What You Need To Run It
 
 ### Software
