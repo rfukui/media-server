@@ -9,10 +9,10 @@ services:
       - stack.env
     restart: unless-stopped
     volumes:
-      - {{REMOTE_BASE_DIR}}/mediaserver/tools/watch:/watch
-      - {{REMOTE_BASE_DIR}}/mediaserver/tools/transmission:/config
-      - {{REMOTE_BASE_DIR}}/mediaserver/downloads:/downloads
-      - {{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/downloads/complete
+      - "{{REMOTE_BASE_DIR}}/mediaserver/tools/watch:/watch"
+      - "{{REMOTE_BASE_DIR}}/mediaserver/tools/transmission:/config"
+      - "{{REMOTE_BASE_DIR}}/mediaserver/downloads:/downloads"
+      - "{{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/downloads/complete"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:{{TRANSMISSION_RPC_PORT}}"]
       interval: 1m
@@ -30,9 +30,9 @@ services:
       - perigo
     restart: unless-stopped
     volumes:
-      - {{REMOTE_BASE_DIR}}/mediaserver/tools/lidarr:/config
-      - {{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/data/completed
-      - {{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/downloads/complete
+      - "{{REMOTE_BASE_DIR}}/mediaserver/tools/lidarr:/config"
+      - "{{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/data/completed"
+      - "{{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/downloads/complete"
      
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:{{LIDARR_PORT}}"]
@@ -51,10 +51,10 @@ services:
       - perigo
     restart: unless-stopped
     volumes:
-      - {{REMOTE_BASE_DIR}}/mediaserver/tools/radarr:/config
-      - {{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/data/completed
-      - {{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/downloads/complete
-      - {{REMOTE_BASE_DIR}}/mediaserver/media/movies:/movies
+      - "{{REMOTE_BASE_DIR}}/mediaserver/tools/radarr:/config"
+      - "{{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/data/completed"
+      - "{{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/downloads/complete"
+      - "{{REMOTE_BASE_DIR}}/mediaserver/media/movies:/movies"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:{{RADARR_PORT}}"]
       interval: 1m
@@ -72,10 +72,10 @@ services:
       - perigo
     restart: unless-stopped
     volumes:
-      - {{REMOTE_BASE_DIR}}/mediaserver/tools/sonarr:/config
-      - {{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/data/completed
-      - {{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/downloads/complete
-      - {{REMOTE_BASE_DIR}}/mediaserver/media/tv:/tv
+      - "{{REMOTE_BASE_DIR}}/mediaserver/tools/sonarr:/config"
+      - "{{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/data/completed"
+      - "{{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/downloads/complete"
+      - "{{REMOTE_BASE_DIR}}/mediaserver/media/tv:/tv"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:{{SONARR_PORT}}"]
       interval: 1m
@@ -93,7 +93,7 @@ services:
     depends_on:
       - perigo
     volumes:
-      - {{REMOTE_BASE_DIR}}/mediaserver/tools/prowlarr:/config
+      - "{{REMOTE_BASE_DIR}}/mediaserver/tools/prowlarr:/config"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:{{PROWLARR_PORT}}"]
       interval: 1m
@@ -124,7 +124,7 @@ services:
     expose:
       - "{{JELLYSEERR_PORT}}"
     volumes:
-      - {{REMOTE_BASE_DIR}}/mediaserver/tools/jellyseerr/:/app/config
+      - "{{REMOTE_BASE_DIR}}/mediaserver/tools/jellyseerr/:/app/config"
       - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
     healthcheck:
@@ -142,11 +142,11 @@ services:
     expose:
       - "{{JELLYFIN_PORT}}"
     volumes:
-      - {{REMOTE_BASE_DIR}}/mediaserver/tools/jellyfin:/config
-      - {{REMOTE_BASE_DIR}}/mediaserver/media/movies:/movies
-      - {{REMOTE_BASE_DIR}}/mediaserver/media/tv:/tv
-      - {{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/music
-      - {{REMOTE_BASE_DIR}}/mediaserver/downloads/:/all
+      - "{{REMOTE_BASE_DIR}}/mediaserver/tools/jellyfin:/config"
+      - "{{REMOTE_BASE_DIR}}/mediaserver/media/movies:/movies"
+      - "{{REMOTE_BASE_DIR}}/mediaserver/media/tv:/tv"
+      - "{{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/music"
+      - "{{REMOTE_BASE_DIR}}/mediaserver/downloads/:/all"
     tmpfs:
       - /config/cache/transcodes:rw,size=2g,mode=1777
     restart: unless-stopped
@@ -162,7 +162,7 @@ services:
     expose:
       - "{{DASHBOARD_PORT}}"
     volumes:
-      - {{REMOTE_BASE_DIR}}/dashboard:/app/config
+      - "{{REMOTE_BASE_DIR}}/dashboard:/app/config"
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
     healthcheck:
@@ -171,83 +171,13 @@ services:
       timeout: 10s
       retries: 5
 
-  immich-server:
-    container_name: immich_server
-    image: ghcr.io/immich-app/immich-server:{{IMMICH_VERSION}}
-    volumes:
-      - {{PHOTOSERVER_UPLOAD_LOCATION}}:/usr/src/app/upload
-      - /etc/localtime:/etc/localtime:ro
-    expose:
-      - "{{IMMICH_PORT}}"
-    environment:
-      DB_PASSWORD: {{DB_PASSWORD}}
-      DB_USERNAME: {{DB_USERNAME}}
-      DB_DATABASE_NAME: {{DB_DATABASE_NAME}}
-      REDIS_HOSTNAME: redis
-      DB_HOSTNAME: database
-    depends_on:
-      - redis
-      - database
-    restart: always
-    healthcheck:
-      disable: false
-
-  immich-machine-learning:
-    container_name: immich_machine_learning
-    image: ghcr.io/immich-app/immich-machine-learning:{{IMMICH_VERSION}}
-    volumes:
-      - model-cache:/cache
-    restart: always
-    healthcheck:
-      disable: false
-
-  redis:
-    container_name: immich_redis
-    image: docker.io/redis:6.2-alpine@sha256:2ba50e1ac3a0ea17b736ce9db2b0a9f6f8b85d4c27d5f5accc6a416d8f42c6d5
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-    restart: always
-
-  database:
-    container_name: immich_postgres
-    image: docker.io/tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0
-    environment:
-      POSTGRES_PASSWORD: {{DB_PASSWORD}}
-      POSTGRES_USER: {{DB_USERNAME}}
-      POSTGRES_DB: {{DB_DATABASE_NAME}}
-      POSTGRES_INITDB_ARGS: "--data-checksums"
-    volumes:
-      - {{PHOTOSERVER_DB_DATA_LOCATION}}:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready --dbname='{{DB_DATABASE_NAME}}' --username='{{DB_USERNAME}}' || exit 1"]
-      interval: 5m
-      start_interval: 30s
-      start_period: 5m
-    command:
-      [
-        "postgres",
-        "-c",
-        "shared_preload_libraries=vectors.so",
-        "-c",
-        "search_path=\"$$user\", public, vectors",
-        "-c",
-        "logging_collector=on",
-        "-c",
-        "max_wal_size=2GB",
-        "-c",
-        "shared_buffers=512MB",
-        "-c",
-        "wal_compression=on"
-      ]
-    restart: always
-
   portainer:
     image: portainer/portainer-ce:latest
     container_name: portainer
     expose:
       - "{{PORTAINER_HTTP_PORT}}"
     volumes:
-      - {{REMOTE_BASE_DIR}}/portainer:/data
+      - "{{REMOTE_BASE_DIR}}/portainer:/data"
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
     healthcheck:
@@ -260,7 +190,7 @@ services:
     expose:
       - "{{YACHT_PORT}}"
     volumes:
-      - {{REMOTE_BASE_DIR}}/yatch:/config
+      - "{{REMOTE_BASE_DIR}}/yatch:/config"
       - /var/run/docker.sock:/var/run/docker.sock
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1:{{YACHT_PORT}}"]
@@ -300,16 +230,12 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --interval 30
-
-volumes:
-  model-cache:
-
 networks:
   ph_network:
     driver: macvlan
     driver_opts:
-      parent: {{PIHOLE_PARENT_INTERFACE}}
+      parent: "{{PIHOLE_PARENT_INTERFACE}}"
     ipam:
       config:
-        - subnet: {{PIHOLE_SUBNET}}
-          gateway: {{PIHOLE_GATEWAY}}
+        - subnet: "{{PIHOLE_SUBNET}}"
+          gateway: "{{PIHOLE_GATEWAY}}"

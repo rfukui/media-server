@@ -22,9 +22,6 @@ opt/homeserver/
 │       ├── transmission/
 │       └── watch/
 ├── dashboard/
-├── photoserver/
-│   ├── db/
-│   └── library/
 ├── pihole/
 │   ├── dnsmasq.d/
 │   └── pihole/
@@ -32,5 +29,5 @@ opt/homeserver/
 └── yatch/
 
 Observação:
-- `dashboard`, `photoserver`, `pihole`, `portainer` e `yatch` continuam existindo em produção como diretórios de dados.
+- `dashboard`, `pihole`, `portainer` e `yatch` continuam existindo em produção como diretórios de dados.
 - Os serviços desses componentes sobem pelo `compose.yaml` principal.

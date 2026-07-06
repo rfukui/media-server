@@ -245,9 +245,6 @@ prepare_mediaserver() {
     '$REMOTE_BASE_DIR/nginx' \
     '$REMOTE_BASE_DIR/www' \
     '$REMOTE_BASE_DIR/dashboard' \
-    '$REMOTE_BASE_DIR/photoserver' \
-    '$REMOTE_BASE_DIR/photoserver/library' \
-    '$REMOTE_BASE_DIR/photoserver/db' \
     '$REMOTE_BASE_DIR/portainer' \
     '$REMOTE_BASE_DIR/yatch' \
     '$REMOTE_BASE_DIR/pihole' \
@@ -313,7 +310,7 @@ validate_stacks() {
 }
 
 start_mediaserver() {
-  remote "cd '$REMOTE_BASE_DIR' && docker compose up -d"
+  remote "cd '$REMOTE_BASE_DIR' && docker compose up -d --remove-orphans"
   remote "cd '$REMOTE_BASE_DIR' && docker compose restart jellyfin jellyseerr lidarr radarr sonarr prowlarr nginx"
 }
 

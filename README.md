@@ -15,7 +15,6 @@ The primary stack in `compose.yaml` runs:
 - [`Radarr`](https://github.com/Radarr/Radarr), [`Sonarr`](https://github.com/Sonarr/Sonarr), and [`Lidarr`](https://github.com/Lidarr/Lidarr) for media automation
 - [`Prowlarr`](https://github.com/Prowlarr/Prowlarr) and [`FlareSolverr`](https://github.com/FlareSolverr/FlareSolverr) for indexer/search support
 - [`Homepage`](https://github.com/gethomepage/homepage) for a simple landing/dashboard page
-- [`Immich`](https://github.com/immich-app/immich) for photo and video backup
 - [`Portainer`](https://github.com/portainer/portainer) and [`Yacht`](https://github.com/SelfhostedPro/Yacht) for Docker administration
 - [`Pi-hole`](https://github.com/pi-hole/pi-hole) for network-wide DNS filtering
 
@@ -104,7 +103,6 @@ Suitable for:
 - small household use
 - multiple services running all the time
 - moderate media automation
-- photo backup with Immich
 - occasional transcoding
 
 Recommended:
@@ -122,7 +120,6 @@ Suitable for:
 
 - several concurrent users
 - larger Jellyfin libraries
-- larger Immich libraries
 - more background indexing
 - more aggressive download automation
 
