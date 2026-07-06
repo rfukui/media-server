@@ -1,0 +1,315 @@
+services:
+  perigo:
+    image: lscr.io/linuxserver/transmission:latest 
+    container_name: perigo
+    expose:
+      - "{{TRANSMISSION_RPC_PORT}}"
+      - "8888"
+    env_file:
+      - stack.env
+    restart: unless-stopped
+    volumes:
+      - {{REMOTE_BASE_DIR}}/mediaserver/tools/watch:/watch
+      - {{REMOTE_BASE_DIR}}/mediaserver/tools/transmission:/config
+      - {{REMOTE_BASE_DIR}}/mediaserver/downloads:/downloads
+      - {{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/downloads/complete
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:{{TRANSMISSION_RPC_PORT}}"]
+      interval: 1m
+      timeout: 10s
+      retries: 5
+ 
+  lidarr:
+    image: ghcr.io/hotio/lidarr
+    container_name: lidarr
+    env_file:
+      - stack.env
+    expose:
+      - "{{LIDARR_PORT}}"
+    depends_on:
+      - perigo
+    restart: unless-stopped
+    volumes:
+      - {{REMOTE_BASE_DIR}}/mediaserver/tools/lidarr:/config
+      - {{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/data/completed
+      - {{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/downloads/complete
+     
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:{{LIDARR_PORT}}"]
+      interval: 1m
+      timeout: 10s
+      retries: 5
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    env_file:
+      - stack.env
+    expose:
+      - "{{RADARR_PORT}}"
+    depends_on:
+      - perigo
+    restart: unless-stopped
+    volumes:
+      - {{REMOTE_BASE_DIR}}/mediaserver/tools/radarr:/config
+      - {{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/data/completed
+      - {{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/downloads/complete
+      - {{REMOTE_BASE_DIR}}/mediaserver/media/movies:/movies
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:{{RADARR_PORT}}"]
+      interval: 1m
+      timeout: 10s
+      retries: 5
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    env_file:
+      - stack.env
+    expose:
+      - "{{SONARR_PORT}}"
+    depends_on:
+      - perigo
+    restart: unless-stopped
+    volumes:
+      - {{REMOTE_BASE_DIR}}/mediaserver/tools/sonarr:/config
+      - {{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/data/completed
+      - {{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/downloads/complete
+      - {{REMOTE_BASE_DIR}}/mediaserver/media/tv:/tv
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:{{SONARR_PORT}}"]
+      interval: 1m
+      timeout: 10s
+      retries: 5
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:nightly
+    container_name: prowlarr
+    expose:
+      - "{{PROWLARR_PORT}}"
+    env_file:
+      - stack.env
+    restart: unless-stopped
+    depends_on:
+      - perigo
+    volumes:
+      - {{REMOTE_BASE_DIR}}/mediaserver/tools/prowlarr:/config
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:{{PROWLARR_PORT}}"]
+      interval: 1m
+      timeout: 10s
+      retries: 5
+
+  flaresolverr:
+    # FlareSolverr: Proxy for handling Captchas
+    image: ghcr.io/flaresolverr/flaresolverr:v3.3.21
+    container_name: flaresolverr
+    expose:
+      - "{{FLARESOLVERR_PORT}}"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:{{FLARESOLVERR_PORT}}"]
+      interval: 1m
+      timeout: 10s
+      retries: 5
+
+
+
+  jellyseerr:
+    # Jellyser: Catalog explorer
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    env_file:
+      - stack.env
+    expose:
+      - "{{JELLYSEERR_PORT}}"
+    volumes:
+      - {{REMOTE_BASE_DIR}}/mediaserver/tools/jellyseerr/:/app/config
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-fL", "http://localhost:{{JELLYSEERR_PORT}}/api/v1/status"]
+      interval: 1m
+      timeout: 10s
+      retries: 5
+
+  jellyfin:
+    # Jellyfin: Media server
+    image: lscr.io/linuxserver/jellyfin
+    container_name: jellyfin
+    env_file:
+      - stack.env
+    expose:
+      - "{{JELLYFIN_PORT}}"
+    volumes:
+      - {{REMOTE_BASE_DIR}}/mediaserver/tools/jellyfin:/config
+      - {{REMOTE_BASE_DIR}}/mediaserver/media/movies:/movies
+      - {{REMOTE_BASE_DIR}}/mediaserver/media/tv:/tv
+      - {{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/music
+      - {{REMOTE_BASE_DIR}}/mediaserver/downloads/:/all
+    tmpfs:
+      - /config/cache/transcodes:rw,size=2g,mode=1777
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:{{JELLYFIN_PORT}}"]
+      interval: 1m
+      timeout: 10s
+      retries: 5
+
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    expose:
+      - "{{DASHBOARD_PORT}}"
+    volumes:
+      - {{REMOTE_BASE_DIR}}/dashboard:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:{{DASHBOARD_PORT}}"]
+      interval: 1m
+      timeout: 10s
+      retries: 5
+
+  immich-server:
+    container_name: immich_server
+    image: ghcr.io/immich-app/immich-server:{{IMMICH_VERSION}}
+    volumes:
+      - {{PHOTOSERVER_UPLOAD_LOCATION}}:/usr/src/app/upload
+      - /etc/localtime:/etc/localtime:ro
+    expose:
+      - "{{IMMICH_PORT}}"
+    environment:
+      DB_PASSWORD: {{DB_PASSWORD}}
+      DB_USERNAME: {{DB_USERNAME}}
+      DB_DATABASE_NAME: {{DB_DATABASE_NAME}}
+      REDIS_HOSTNAME: redis
+      DB_HOSTNAME: database
+    depends_on:
+      - redis
+      - database
+    restart: always
+    healthcheck:
+      disable: false
+
+  immich-machine-learning:
+    container_name: immich_machine_learning
+    image: ghcr.io/immich-app/immich-machine-learning:{{IMMICH_VERSION}}
+    volumes:
+      - model-cache:/cache
+    restart: always
+    healthcheck:
+      disable: false
+
+  redis:
+    container_name: immich_redis
+    image: docker.io/redis:6.2-alpine@sha256:2ba50e1ac3a0ea17b736ce9db2b0a9f6f8b85d4c27d5f5accc6a416d8f42c6d5
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+    restart: always
+
+  database:
+    container_name: immich_postgres
+    image: docker.io/tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0
+    environment:
+      POSTGRES_PASSWORD: {{DB_PASSWORD}}
+      POSTGRES_USER: {{DB_USERNAME}}
+      POSTGRES_DB: {{DB_DATABASE_NAME}}
+      POSTGRES_INITDB_ARGS: "--data-checksums"
+    volumes:
+      - {{PHOTOSERVER_DB_DATA_LOCATION}}:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready --dbname='{{DB_DATABASE_NAME}}' --username='{{DB_USERNAME}}' || exit 1"]
+      interval: 5m
+      start_interval: 30s
+      start_period: 5m
+    command:
+      [
+        "postgres",
+        "-c",
+        "shared_preload_libraries=vectors.so",
+        "-c",
+        "search_path=\"$$user\", public, vectors",
+        "-c",
+        "logging_collector=on",
+        "-c",
+        "max_wal_size=2GB",
+        "-c",
+        "shared_buffers=512MB",
+        "-c",
+        "wal_compression=on"
+      ]
+    restart: always
+
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    expose:
+      - "{{PORTAINER_HTTP_PORT}}"
+    volumes:
+      - {{REMOTE_BASE_DIR}}/portainer:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    healthcheck:
+      disable: true
+
+  yacht:
+    image: selfhostedpro/yacht
+    container_name: yacht
+    restart: unless-stopped
+    expose:
+      - "{{YACHT_PORT}}"
+    volumes:
+      - {{REMOTE_BASE_DIR}}/yatch:/config
+      - /var/run/docker.sock:/var/run/docker.sock
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:{{YACHT_PORT}}"]
+      interval: 1m
+      timeout: 10s
+      retries: 5
+
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    networks:
+      ph_network:
+        ipv4_address: "{{PIHOLE_IPV4_ADDRESS}}"
+    environment:
+      TZ: "{{TZ}}"
+      WEBPASSWORD: "{{PIHOLE_WEBPASSWORD}}"
+      DNSMASQ_LISTENING: "{{PIHOLE_DNSMASQ_LISTENING}}"
+    volumes:
+      - "{{REMOTE_BASE_DIR}}/pihole/pihole:/etc/pihole"
+      - "{{REMOTE_BASE_DIR}}/pihole/dnsmasq.d:/etc/dnsmasq.d"
+    restart: unless-stopped
+
+  nginx:
+    container_name: nginx
+    image: nginx
+    ports:
+      - "{{NGINX_HTTP_PORT}}:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./www/index.html:/usr/share/nginx/html/index.html:ro
+
+
+  watchtower:
+    # Watchtower: Automatically update Docker images
+    image: containrrr/watchtower
+    container_name: watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 30
+
+volumes:
+  model-cache:
+
+networks:
+  ph_network:
+    driver: macvlan
+    driver_opts:
+      parent: {{PIHOLE_PARENT_INTERFACE}}
+    ipam:
+      config:
+        - subnet: {{PIHOLE_SUBNET}}
+          gateway: {{PIHOLE_GATEWAY}}

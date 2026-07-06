@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home Server</title>
+    <style>
+      :root {
+        --bg: #0f1720;
+        --bg2: #16212d;
+        --card: rgba(18, 27, 37, 0.92);
+        --line: rgba(255, 255, 255, 0.08);
+        --text: #eef4f8;
+        --muted: #96a6b5;
+        --accent: #5bc0eb;
+        --accent2: #a8e6cf;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top left, rgba(91, 192, 235, 0.18), transparent 28%),
+          radial-gradient(circle at top right, rgba(168, 230, 207, 0.15), transparent 24%),
+          linear-gradient(160deg, var(--bg), var(--bg2));
+      }
+
+      main {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 40px 0 56px;
+      }
+
+      h1 {
+        margin: 0 0 10px;
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        letter-spacing: -0.04em;
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .hero {
+        padding: 20px 0 28px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        margin-top: 28px;
+      }
+
+      a.card {
+        display: block;
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: var(--card);
+        color: inherit;
+        text-decoration: none;
+        transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+      }
+
+      a.card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(91, 192, 235, 0.45);
+        background: rgba(24, 36, 49, 0.96);
+      }
+
+      .name {
+        font-size: 1.1rem;
+        font-weight: 700;
+      }
+
+      .url {
+        margin-top: 8px;
+        color: var(--accent2);
+        font-size: 0.92rem;
+        word-break: break-word;
+      }
+
+      .desc {
+        margin-top: 10px;
+        font-size: 0.92rem;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <h1>Home Server</h1>
+        <p>Atalhos para os serviços principais deste servidor.</p>
+      </section>
+
+      <section class="grid">
+        <a class="card" href="/jellyfin/">
+          <div class="name">Jellyfin</div>
+          <div class="url">/jellyfin/</div>
+          <div class="desc">Audio and video media server for streaming your local library.</div>
+        </a>
+
+        <a class="card" href="/jellyseerr/">
+          <div class="name">Jellyseerr</div>
+          <div class="url">/jellyseerr/</div>
+          <div class="desc">Request manager for movies and series integrated with Jellyfin.</div>
+        </a>
+
+        <a class="card" href="/transmission/">
+          <div class="name">Transmission</div>
+          <div class="url">/transmission/</div>
+          <div class="desc">Torrent client used to download media and other files.</div>
+        </a>
+
+        <a class="card" href="/lidarr/">
+          <div class="name">Lidarr</div>
+          <div class="url">/lidarr/</div>
+          <div class="desc">Music collection manager and downloader for albums and artists.</div>
+        </a>
+
+        <a class="card" href="/radarr/">
+          <div class="name">Radarr</div>
+          <div class="url">/radarr/</div>
+          <div class="desc">Movie collection manager and downloader integrated with your library.</div>
+        </a>
+
+        <a class="card" href="/sonarr/">
+          <div class="name">Sonarr</div>
+          <div class="url">/sonarr/</div>
+          <div class="desc">Series collection manager and downloader for TV shows and episodes.</div>
+        </a>
+
+        <a class="card" href="/prowlarr/">
+          <div class="name">Prowlarr</div>
+          <div class="url">/prowlarr/</div>
+          <div class="desc">Indexer manager that centralizes trackers and search sources.</div>
+        </a>
+
+        <a class="card" href="/flaresolverr/">
+          <div class="name">FlareSolverr</div>
+          <div class="url">/flaresolverr/</div>
+          <div class="desc">Anti-bot helper used by indexers protected by Cloudflare.</div>
+        </a>
+
+        <a class="card" href="{{DASHBOARD_URL}}">
+          <div class="name">Dashboard</div>
+          <div class="url">{{DASHBOARD_URL}}</div>
+          <div class="desc">General server dashboard with widgets and service summaries.</div>
+        </a>
+
+        <a class="card" href="{{IMMICH_URL}}">
+          <div class="name">Immich</div>
+          <div class="url">{{IMMICH_URL}}</div>
+          <div class="desc">Photo and video backup server similar to a self-hosted Google Photos.</div>
+        </a>
+
+        <a class="card" href="{{PORTAINER_URL}}">
+          <div class="name">Portainer</div>
+          <div class="url">{{PORTAINER_URL}}</div>
+          <div class="desc">Docker management UI for containers, images, stacks and volumes.</div>
+        </a>
+
+        <a class="card" href="{{YACHT_URL}}">
+          <div class="name">Yacht</div>
+          <div class="url">{{YACHT_URL}}</div>
+          <div class="desc">Alternative Docker UI focused on simple container administration.</div>
+        </a>
+
+        <a class="card" href="{{PIHOLE_URL}}">
+          <div class="name">Pi-hole</div>
+          <div class="url">{{PIHOLE_URL}}</div>
+          <div class="desc">Network DNS filter and ad blocker for the whole LAN.</div>
+        </a>
+      </section>
+    </main>
+  </body>
+</html>

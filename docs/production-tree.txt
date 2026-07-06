@@ -1,0 +1,36 @@
+opt/homeserver/
+├── compose.yaml
+├── stack.env
+├── nginx/
+│   └── nginx.conf
+├── www/
+│   └── index.html
+├── mediaserver/
+│   ├── downloads/
+│   │   ├── completed/
+│   │   └── incomplete/
+│   ├── media/
+│   │   ├── movies/
+│   │   └── tv/
+│   └── tools/
+│       ├── jellyfin/
+│       ├── jellyseerr/
+│       ├── lidarr/
+│       ├── prowlarr/
+│       ├── radarr/
+│       ├── sonarr/
+│       ├── transmission/
+│       └── watch/
+├── dashboard/
+├── photoserver/
+│   ├── db/
+│   └── library/
+├── pihole/
+│   ├── dnsmasq.d/
+│   └── pihole/
+├── portainer/
+└── yatch/
+
+Observação:
+- `dashboard`, `photoserver`, `pihole`, `portainer` e `yatch` continuam existindo em produção como diretórios de dados.
+- Os serviços desses componentes sobem pelo `compose.yaml` principal.
