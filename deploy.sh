@@ -126,7 +126,7 @@ remote_install_package() {
 
   case "$pm" in
     apt)
-      remote_sudo "DEBIAN_FRONTEND=noninteractive apt-get update"
+      remote_sudo "DEBIAN_FRONTEND=noninteractive apt-get update -o Acquire::https::Verify-Peer=false -o Acquire::https::Verify-Host=false"
       remote_sudo "DEBIAN_FRONTEND=noninteractive apt-get install -y $pkg_apt"
       ;;
     dnf)
@@ -147,8 +147,18 @@ remote_install_package() {
 
 remote_bootstrap_dependencies() {
   echo "Ensuring remote dependencies."
-  remote_install_package "docker" "docker.io docker-compose-plugin" "docker" "docker" "docker docker-compose"
-  if ! remote "command -v docker-compose >/dev/null 2>&1 && docker-compose version >/dev/null 2>&1"; then
+
+  if remote "command -v docker >/dev/null 2>&1 && docker --version >/dev/null 2>&1"; then
+    echo "Docker already installed on remote."
+  else
+    remote_install_package "docker" "docker.io docker-compose-plugin" "docker" "docker" "docker docker-compose"
+  fi
+
+  if remote "docker compose version >/dev/null 2>&1"; then
+    echo "Docker compose plugin already available on remote."
+  elif remote "command -v docker-compose >/dev/null 2>&1 && docker-compose version >/dev/null 2>&1"; then
+    echo "docker-compose already available on remote."
+  else
     remote_install_package "docker-compose" "docker-compose-plugin" "docker-compose-plugin" "docker-compose-plugin" "docker-compose"
   fi
 

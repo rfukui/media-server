@@ -27,31 +27,30 @@
         href: /transmission/
         description: Cliente de downloads
         container: perigo
-        siteMonitor: http://perigo:9091/transmission/web/
 
     - Lidarr:
         href: /lidarr/
         description: Música e metadados
         container: lidarr
-        siteMonitor: http://lidarr:8686
+        siteMonitor: http://lidarr:8686/lidarr/ping
 
     - Radarr:
         href: /radarr/
         description: Filmes automáticos
         container: radarr
-        siteMonitor: http://radarr:7878
+        siteMonitor: http://radarr:7878/radarr/ping
 
     - Sonarr:
         href: /sonarr/
         description: Séries automáticas
         container: sonarr
-        siteMonitor: http://sonarr:8989
+        siteMonitor: http://sonarr:8989/sonarr/ping
 
     - Prowlarr:
         href: /prowlarr/
         description: Indexadores indexados
         container: prowlarr
-        siteMonitor: http://prowlarr:9696
+        siteMonitor: http://prowlarr:9696/prowlarr/ping
 
     - FlareSolverr:
         href: /flaresolverr/

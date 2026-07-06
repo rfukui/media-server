@@ -35,7 +35,7 @@ services:
       - "{{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/downloads/complete"
      
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:{{LIDARR_PORT}}"]
+      test: ["CMD", "curl", "-f", "http://localhost:{{LIDARR_PORT}}/lidarr/ping"]
       interval: 1m
       timeout: 10s
       retries: 5
@@ -56,7 +56,7 @@ services:
       - "{{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/downloads/complete"
       - "{{REMOTE_BASE_DIR}}/mediaserver/media/movies:/movies"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:{{RADARR_PORT}}"]
+      test: ["CMD", "curl", "-f", "http://localhost:{{RADARR_PORT}}/radarr/ping"]
       interval: 1m
       timeout: 10s
       retries: 5
@@ -77,7 +77,7 @@ services:
       - "{{REMOTE_BASE_DIR}}/mediaserver/downloads/completed:/downloads/complete"
       - "{{REMOTE_BASE_DIR}}/mediaserver/media/tv:/tv"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:{{SONARR_PORT}}"]
+      test: ["CMD", "curl", "-f", "http://localhost:{{SONARR_PORT}}/sonarr/ping"]
       interval: 1m
       timeout: 10s
       retries: 5
@@ -95,7 +95,7 @@ services:
     volumes:
       - "{{REMOTE_BASE_DIR}}/mediaserver/tools/prowlarr:/config"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:{{PROWLARR_PORT}}"]
+      test: ["CMD", "curl", "-f", "http://localhost:{{PROWLARR_PORT}}/prowlarr/ping"]
       interval: 1m
       timeout: 10s
       retries: 5
@@ -128,7 +128,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-fL", "http://localhost:{{JELLYSEERR_PORT}}/api/v1/status"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:{{JELLYSEERR_PORT}}/api/v1/status"]
       interval: 1m
       timeout: 10s
       retries: 5
@@ -203,9 +203,8 @@ services:
   pihole:
     container_name: pihole
     image: pihole/pihole:latest
-    networks:
-      ph_network:
-        ipv4_address: "{{PIHOLE_IPV4_ADDRESS}}"
+    expose:
+      - "{{PIHOLE_HTTP_PORT}}"
     environment:
       TZ: "{{TZ}}"
       WEBPASSWORD: "{{PIHOLE_WEBPASSWORD}}"
@@ -232,12 +231,3 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --interval 30
-networks:
-  ph_network:
-    driver: macvlan
-    driver_opts:
-      parent: "{{PIHOLE_PARENT_INTERFACE}}"
-    ipam:
-      config:
-        - subnet: "{{PIHOLE_SUBNET}}"
-          gateway: "{{PIHOLE_GATEWAY}}"

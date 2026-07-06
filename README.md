@@ -16,7 +16,7 @@ The primary stack in `compose.yaml` runs:
 - [`Prowlarr`](https://github.com/Prowlarr/Prowlarr) and [`FlareSolverr`](https://github.com/FlareSolverr/FlareSolverr) for indexer/search support
 - [`Homepage`](https://github.com/gethomepage/homepage) for a simple landing/dashboard page
 - [`Portainer`](https://github.com/portainer/portainer) and [`Yacht`](https://github.com/SelfhostedPro/Yacht) for Docker administration
-- [`Pi-hole`](https://github.com/pi-hole/pi-hole) for network-wide DNS filtering
+- [`Pi-hole`](https://github.com/pi-hole/pi-hole) for internal DNS filtering experiments and administration
 
 ## Repository Layout
 
@@ -53,8 +53,7 @@ This repository follows the [Conventional Commits](https://www.conventionalcommi
 
 - A stable LAN address or a stable DNS name pointing to the server
 - Port `80/tcp` available for the main `nginx` gateway
-- A working network interface for Pi-hole `macvlan`
-- Local DNS planning if you want `Pi-hole` to be used by other machines on the network
+- Local DNS planning if you later decide to expose `Pi-hole` to other machines on the network
 
 ### Storage
 
@@ -136,7 +135,7 @@ Recommended:
 - This project assumes persistent data directories already exist or will be created on the remote host.
 - The deploy flow is template-driven from the local `.env` file.
 - `stack.env` is used by containers inside the main compose stack. It is not a replacement for the local deploy-time `.env`.
-- Pi-hole uses `macvlan`, which means the host itself may not be able to reach the Pi-hole IP directly even when the container is healthy.
+- Pi-hole is kept on the internal Docker network and is not assigned a dedicated LAN IP. Its admin UI is available through the main nginx gateway.
 
 ## Deployment Model
 
