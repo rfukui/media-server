@@ -1,0 +1,13 @@
+title: Home Server
+statusStyle: dot
+headerStyle: boxed
+quicklaunch:
+  searchDescriptions: true
+
+layout:
+  "Serviços":
+    style: row
+    columns: 3
+  "Infra":
+    style: row
+    columns: 3

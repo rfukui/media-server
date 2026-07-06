@@ -161,6 +161,8 @@ services:
     container_name: homepage
     expose:
       - "{{DASHBOARD_PORT}}"
+    environment:
+      HOMEPAGE_ALLOWED_HOSTS: "{{DASHBOARD_ALLOWED_HOSTS}}"
     volumes:
       - "{{REMOTE_BASE_DIR}}/dashboard:/app/config"
       - /var/run/docker.sock:/var/run/docker.sock

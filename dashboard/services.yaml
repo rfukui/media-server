@@ -1,0 +1,81 @@
+- Serviços:
+    - Proxy Dashboard:
+        href: /dashboard/
+        description: Gateway Nginx + painel principal
+        container: nginx
+        siteMonitor: http://nginx:80
+
+    - Homepage:
+        href: /dashboard/
+        description: Visão geral dos serviços
+        container: homepage
+        siteMonitor: http://homepage:3000
+
+    - Jellyfin:
+        href: /jellyfin/
+        description: Servidor de mídia (filmes e séries)
+        container: jellyfin
+        siteMonitor: http://jellyfin:8096
+
+    - Jellyseerr:
+        href: /jellyseerr/
+        description: Pedidos de filmes e séries
+        container: jellyseerr
+        siteMonitor: http://jellyseerr:5055/api/v1/status
+
+    - Transmission:
+        href: /transmission/
+        description: Cliente de downloads
+        container: perigo
+        siteMonitor: http://perigo:9091/transmission/web/
+
+    - Lidarr:
+        href: /lidarr/
+        description: Música e metadados
+        container: lidarr
+        siteMonitor: http://lidarr:8686
+
+    - Radarr:
+        href: /radarr/
+        description: Filmes automáticos
+        container: radarr
+        siteMonitor: http://radarr:7878
+
+    - Sonarr:
+        href: /sonarr/
+        description: Séries automáticas
+        container: sonarr
+        siteMonitor: http://sonarr:8989
+
+    - Prowlarr:
+        href: /prowlarr/
+        description: Indexadores indexados
+        container: prowlarr
+        siteMonitor: http://prowlarr:9696
+
+    - FlareSolverr:
+        href: /flaresolverr/
+        description: Proxy anti-bot para indexers
+        container: flaresolverr
+        siteMonitor: http://flaresolverr:8191
+
+    - Portainer:
+        href: /portainer/
+        description: Administração Docker
+        container: portainer
+        siteMonitor: http://portainer:9000
+
+    - Yacht:
+        href: /yacht/
+        description: Administração Docker alternativa
+        container: yacht
+        siteMonitor: http://yacht:8000
+
+    - Pi-hole:
+        href: "{{PIHOLE_URL}}"
+        description: DNS e bloqueio
+        container: pihole
+
+    - Watchtower:
+        description: Atualizações automáticas
+        container: watchtower

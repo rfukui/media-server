@@ -36,6 +36,8 @@ FILES=(
   "nginx/nginx.conf"
   "www/index.html"
   "stack.env"
+  "dashboard/settings.yaml"
+  "dashboard/services.yaml"
 )
 
 usage() {
@@ -184,7 +186,7 @@ remote_target_path() {
     compose.yaml|stack.env)
       printf "%s/%s" "$REMOTE_BASE_DIR" "$file"
       ;;
-    nginx/*|www/*)
+    nginx/*|www/*|dashboard/*)
       printf "%s/%s" "$REMOTE_BASE_DIR" "$file"
       ;;
     *)
@@ -311,7 +313,7 @@ validate_stacks() {
 
 start_mediaserver() {
   remote "cd '$REMOTE_BASE_DIR' && docker compose up -d --remove-orphans"
-  remote "cd '$REMOTE_BASE_DIR' && docker compose restart jellyfin jellyseerr lidarr radarr sonarr prowlarr nginx"
+  remote "cd '$REMOTE_BASE_DIR' && docker compose restart homepage jellyfin jellyseerr lidarr radarr sonarr prowlarr nginx"
 }
 
 start_stack() {
