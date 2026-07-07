@@ -38,6 +38,7 @@ FILES=(
   "stack.env"
   "dashboard/settings.yaml"
   "dashboard/services.yaml"
+  "scripts/bootstrap_mediaserver.py"
 )
 
 usage() {
@@ -196,7 +197,7 @@ remote_target_path() {
     compose.yaml|stack.env)
       printf "%s/%s" "$REMOTE_BASE_DIR" "$file"
       ;;
-    nginx/*|www/*|dashboard/*)
+    nginx/*|www/*|dashboard/*|scripts/*)
       printf "%s/%s" "$REMOTE_BASE_DIR" "$file"
       ;;
     *)
@@ -256,6 +257,7 @@ prepare_mediaserver() {
     '$REMOTE_BASE_DIR' \
     '$REMOTE_BASE_DIR/nginx' \
     '$REMOTE_BASE_DIR/www' \
+    '$REMOTE_BASE_DIR/scripts' \
     '$REMOTE_BASE_DIR/dashboard' \
     '$REMOTE_BASE_DIR/portainer' \
     '$REMOTE_BASE_DIR/yatch' \
@@ -324,6 +326,8 @@ validate_stacks() {
 start_mediaserver() {
   remote "cd '$REMOTE_BASE_DIR' && docker compose up -d --remove-orphans"
   remote "cd '$REMOTE_BASE_DIR' && docker compose restart homepage jellyfin jellyseerr lidarr radarr sonarr prowlarr nginx"
+  remote "cd '$REMOTE_BASE_DIR' && python3 scripts/bootstrap_mediaserver.py"
+  remote "cd '$REMOTE_BASE_DIR' && docker compose restart jellyseerr homepage"
 }
 
 start_stack() {

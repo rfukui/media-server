@@ -22,6 +22,7 @@ The primary stack in `compose.yaml` runs:
 
 - `compose.yaml`: main application stack
 - `deploy.sh`: deploy helper for the remote host
+- `scripts/bootstrap_mediaserver.py`: post-deploy bootstrap that wires service integrations on a fresh install
 - `stack.env`: container environment shared by services in the main stack
 - `nginx/nginx.conf`: reverse proxy configuration
 - `www/index.html`: server landing page
@@ -135,6 +136,7 @@ Recommended:
 - This project assumes persistent data directories already exist or will be created on the remote host.
 - The deploy flow is template-driven from the local `.env` file.
 - `stack.env` is used by containers inside the main compose stack. It is not a replacement for the local deploy-time `.env`.
+- `deploy.sh mediaserver` does two phases: it starts the containers and then runs a bootstrap step that connects Transmission, Lidarr, Radarr, Sonarr, Prowlarr, Jellyfin, and Jellyseerr automatically on a fresh machine.
 - Pi-hole is kept on the internal Docker network and is not assigned a dedicated LAN IP. Its admin UI is available through the main nginx gateway.
 
 ## Deployment Model
