@@ -29,6 +29,20 @@ The primary stack in `compose.yaml` runs:
 - `.env`: local deploy-time variables and template values
 - `.env.example`: documented example of the required local variables
 
+## Configuration
+
+Copy `.env.example` to `.env` and review it before the first deploy.
+
+Important groups of variables:
+
+- Remote deploy access: `REMOTE_USER`, `REMOTE_HOST`, `REMOTE_PASSWORD`, `REMOTE_SUDO_PASSWORD`, `REMOTE_BASE_DIR`
+- Public routing: `PUBLIC_SCHEME`, `PUBLIC_HOST`, `PUBLIC_BASE_URL`, `NGINX_HTTP_PORT`
+- Runtime identity and permissions: `MEDIA_UID`, `MEDIA_GID`, `PUID`, `PGID`, `TZ`
+- First-run Jellyfin bootstrap: `JELLYFIN_SERVER_NAME`, `JELLYFIN_ADMIN_USERNAME`, `JELLYFIN_ADMIN_PASSWORD`
+- Jellyseerr presentation: `JELLYSEERR_APPLICATION_TITLE`
+
+The example file contains the full list with inline comments for every variable used by the templates.
+
 ## Commit Convention
 
 This repository follows the [Conventional Commits](https://www.conventionalcommits.org/) specification.
@@ -137,6 +151,8 @@ Recommended:
 - The deploy flow is template-driven from the local `.env` file.
 - `stack.env` is used by containers inside the main compose stack. It is not a replacement for the local deploy-time `.env`.
 - `deploy.sh mediaserver` does two phases: it starts the containers and then runs a bootstrap step that connects Transmission, Lidarr, Radarr, Sonarr, Prowlarr, Jellyfin, and Jellyseerr automatically on a fresh machine.
+- On a brand-new server, the deploy bootstrap creates the initial Jellyfin admin user from `.env` and then wires the service integrations automatically.
+- On an existing server, the bootstrap is designed to be idempotent and reapply the service connections without recreating the media data directories.
 - Pi-hole is kept on the internal Docker network and is not assigned a dedicated LAN IP. Its admin UI is available through the main nginx gateway.
 
 ## Deployment Model
